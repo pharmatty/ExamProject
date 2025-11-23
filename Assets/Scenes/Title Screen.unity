@@ -299,7 +299,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 127497232}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1177596700}
+        m_TargetAssemblyTypeName: UIAudio, Assembly-CSharp
+        m_MethodName: PlaySelect
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &269078672
 GameObject:
   m_ObjectHideFlags: 0
@@ -880,6 +892,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6a84d191d8196cd4a9a1338b7cae311a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIAudio
+  audioSource: {fileID: 1177596701}
+  moveSound: {fileID: 8300000, guid: e54d44572957ea74fa2d1042c6beb572, type: 3}
+  selectSound: {fileID: 8300000, guid: d2e7249c2ea01064dae15c37c101d8bc, type: 3}
 --- !u!82 &1177596701
 AudioSource:
   m_ObjectHideFlags: 0
@@ -1213,7 +1228,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1733588023}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1177596700}
+        m_TargetAssemblyTypeName: UIAudio, Assembly-CSharp
+        m_MethodName: PlaySelect
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1733588026
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1561,8 +1588,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4282006074
-  m_fontColor: {r: 0.22745098, g: 0.22745098, b: 0.22745098, a: 1}
+    rgba: 4286743170
+  m_fontColor: {r: 0.509434, g: 0.509434, b: 0.509434, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -1674,7 +1701,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2038936465}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1177596700}
+        m_TargetAssemblyTypeName: UIAudio, Assembly-CSharp
+        m_MethodName: PlaySelect
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &2142862576
 GameObject:
   m_ObjectHideFlags: 0
