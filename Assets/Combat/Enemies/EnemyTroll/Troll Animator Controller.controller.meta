@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 5d43b6adeb91d3a4ea6d3efc65d644c1
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 9100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 322461
+  packageName: Enemy Troll Character
+  packageVersion: 1.0
+  assetPath: Assets/Enemies/EnemyTroll/Troll Animator Controller.controller
+  uploadId: 762097

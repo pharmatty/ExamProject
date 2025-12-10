@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 19775e3dca5ffe94a86a59840adb2321
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 322461
+  packageName: Enemy Troll Character
+  packageVersion: 1.0
+  assetPath: Assets/Lil Pupinduy/Character/Enemy Troll Character/Scripts/UniversalRenderPipelineAsset_Renderer.asset
+  uploadId: 762097

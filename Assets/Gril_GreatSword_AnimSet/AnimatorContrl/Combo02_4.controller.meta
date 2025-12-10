@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 1e301b0a42dc68f45b69f5b2ae164547
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 9100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 187912
+  packageName: Girl GreatSword AnimSet
+  packageVersion: 1.21
+  assetPath: Assets/Gril_GreatSword_AnimSet/AnimatorContrl/Combo02_4.controller
+  uploadId: 706202

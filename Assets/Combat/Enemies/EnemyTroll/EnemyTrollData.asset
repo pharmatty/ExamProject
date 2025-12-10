@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36cefe2c6e1ba58419e807a384f40527, type: 3}
+  m_Name: EnemyTrollData
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyData
+  enemyName: Donian Troll
+  maxHealth: 250
+  attack: 14
+  defense: 3
+  speed: 5
+  enemySkills: []
+  expReward: 10
+  goldReward: 5
+  enemyPrefab: {fileID: 2614108174294103420, guid: 174d6f0a53266204a93780143975e42c, type: 3}
