@@ -1,7 +1,14 @@
 fileFormatVersion: 2
 guid: 6af990df6a4aa6a4e81570c255b451e2
+AssetOrigin:
+  serializedVersion: 1
+  productId: 187912
+  packageName: Girl GreatSword AnimSet
+  packageVersion: 1.21
+  assetPath: Assets/Gril_GreatSword_AnimSet/Animation/Humanoid/Attack02.fbx
+  uploadId: 706202
 ModelImporter:
-  serializedVersion: 22200
+  serializedVersion: 24200
   internalIDToNameTable: []
   externalObjects: {}
   materials:
@@ -16,8 +23,6 @@ ModelImporter:
     optimizeGameObjects: 0
     removeConstantScaleCurves: 0
     motionNodeName: 
-    rigImportErrors: 
-    rigImportWarnings: 
     animationImportErrors: 
     animationImportWarnings: 
     animationRetargetingWarnings: 
@@ -44,7 +49,7 @@ ModelImporter:
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
-      loopTime: 1
+      loopTime: 0
       loopBlend: 0
       loopBlendOrientation: 1
       loopBlendPositionY: 1
@@ -87,6 +92,9 @@ ModelImporter:
     maxBonesPerVertex: 4
     minBoneWeight: 0.001
     optimizeBones: 1
+    generateMeshLods: 0
+    meshLodGenerationFlags: 0
+    maximumMeshLod: -1
     meshOptimizationFlags: -1
     indexFormat: 0
     secondaryUVAngleDistortion: 8
@@ -860,8 +868,7 @@ ModelImporter:
     hasTranslationDoF: 1
     hasExtraRoot: 1
     skeletonHasParents: 1
-  lastHumanDescriptionAvatarSource: {fileID: 9000000, guid: 03fbec8b838c4fd29df7637400739df6,
-    type: 3}
+  lastHumanDescriptionAvatarSource: {fileID: 9000000, guid: 03fbec8b838c4fd29df7637400739df6, type: 3}
   autoGenerateAvatarMappingIfUnspecified: 1
   animationType: 3
   humanoidOversampling: 1
@@ -873,10 +880,3 @@ ModelImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
-AssetOrigin:
-  serializedVersion: 1
-  productId: 187912
-  packageName: Girl GreatSword AnimSet
-  packageVersion: 1.21
-  assetPath: Assets/Gril_GreatSword_AnimSet/Animation/Humanoid/Attack02.fbx
-  uploadId: 706202

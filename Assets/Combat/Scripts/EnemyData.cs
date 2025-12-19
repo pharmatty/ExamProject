@@ -13,6 +13,9 @@ public class EnemyData : ScriptableObject
     public int defense = 3;
     public int speed = 5;
 
+    [Header("Animation")]
+    public string attackStateName = "Attack";
+
     [Header("Skills")]
     public List<SkillData> enemySkills = new List<SkillData>();
 
