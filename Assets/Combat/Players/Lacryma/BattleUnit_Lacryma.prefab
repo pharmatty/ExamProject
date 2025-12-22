@@ -729,7 +729,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5084024934826696307}
   m_Layer: 0
-  m_Name: CameraPointLacryma
+  m_Name: CameraPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2828,6 +2828,7 @@ MonoBehaviour:
   currentHealth: 0
   currentSkillPoints: 0
   isEnemy: 0
+  spawnIndex: -1
   animator: {fileID: 3606113096493756951}
   cameraFocusPoint: {fileID: 5084024934826696307}
 --- !u!95 &3606113096493756951
@@ -2912,14 +2913,36 @@ MonoBehaviour:
       fadeInDuration_slider: 0.234
       fadeOutDuration: 0.05
       trailLengthLifetime: 0.35
+  - clip: {fileID: -5174670775634480577, guid: 20a373764f48fa046ad1bb278b5314f2, type: 3}
+    preset:
+      clipAsset: {fileID: -5174670775634480577, guid: 20a373764f48fa046ad1bb278b5314f2, type: 3}
+      enableTrail: 0
+      startTime: 0
+      endTime: 0.90000004
+      fadeInDuration_slider: 0.2
+      fadeOutDuration: 0.05
+      trailLengthLifetime: 0.35
+  - clip: {fileID: 1197990645542838990, guid: b390d8a198cd66241989454fe4256b9a, type: 3}
+    preset:
+      clipAsset: {fileID: 1197990645542838990, guid: b390d8a198cd66241989454fe4256b9a, type: 3}
+      enableTrail: 0
+      startTime: 0
+      endTime: 1.2333333
+      fadeInDuration_slider: 0.2
+      fadeOutDuration: 0.05
+      trailLengthLifetime: 0.35
   animationClipList:
   - {fileID: 8351031456238164869, guid: c71969d58d4c3474faeeb81290db2a8a, type: 3}
   - {fileID: 8351031456238164869, guid: 92948a5c0dd38674cbc3657cd8e06105, type: 3}
+  - {fileID: -5174670775634480577, guid: 20a373764f48fa046ad1bb278b5314f2, type: 3}
+  - {fileID: 1197990645542838990, guid: b390d8a198cd66241989454fe4256b9a, type: 3}
   - {fileID: -7820010813596602565, guid: 888ff210a96f55349b5303e3cf2bac7d, type: 3}
   selectedClipIndex: 2
   animationClipsNames:
   - sword_heroic_f
   - sword_heroic_f
+  - hit01
+  - dead05
   - Attack02
   playbackSpeed: 1
   animationPlaybackMode: 1

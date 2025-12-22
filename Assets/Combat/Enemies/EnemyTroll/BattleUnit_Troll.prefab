@@ -106,6 +106,7 @@ MonoBehaviour:
   currentHealth: 0
   currentSkillPoints: 0
   isEnemy: 1
+  spawnIndex: -1
   animator: {fileID: 3838226667804411984}
   cameraFocusPoint: {fileID: 6309354888343693097}
 --- !u!114 &5288287501550221766
@@ -142,19 +143,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: f5f9d19d592a91e4db6d6e1a28b6e27d, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.1826407
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: f5f9d19d592a91e4db6d6e1a28b6e27d, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: f5f9d19d592a91e4db6d6e1a28b6e27d, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.98317975
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: f5f9d19d592a91e4db6d6e1a28b6e27d, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: f5f9d19d592a91e4db6d6e1a28b6e27d, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -162,7 +163,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: f5f9d19d592a91e4db6d6e1a28b6e27d, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: -158.953
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: f5f9d19d592a91e4db6d6e1a28b6e27d, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z

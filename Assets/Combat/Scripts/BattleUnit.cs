@@ -17,20 +17,19 @@ public class BattleUnit : MonoBehaviour
     public bool isEnemy;
     public bool IsDead => currentHealth <= 0;
 
+    [Header("Spawn Info")]
+    public int spawnIndex = -1; // ✅ NEW (stable mapping)
+
     [Header("References")]
-    public Animator animator;               // MUST be the visual/model animator
+    public Animator animator;
     public Transform cameraFocusPoint;
 
-    // Transform that Animator actually animates
     private Transform visualRoot;
-
     private Vector3 startPosition;
     private Quaternion startRotation;
 
-    // Cached UI reference (NEW, SAFE)
     private BattleUIManager uiManager;
 
-    // Animator parameter names
     private static readonly int ATTACK_TRIGGER = Animator.StringToHash("Attack");
     private static readonly int HIT_TRIGGER = Animator.StringToHash("Hit");
     private static readonly int DEATH_TRIGGER = Animator.StringToHash("Death");
@@ -41,8 +40,6 @@ public class BattleUnit : MonoBehaviour
     {
         BindAnimator();
         CacheStartTransform();
-
-        // ✅ Unity-approved replacement for FindObjectOfType
         uiManager = FindFirstObjectByType<BattleUIManager>();
     }
 
@@ -67,13 +64,9 @@ public class BattleUnit : MonoBehaviour
         CacheStartTransform();
     }
 
-    // =========================
-    // ANIMATOR BINDING
-    // =========================
     private void BindAnimator()
     {
         animator = GetComponentInChildren<Animator>(true);
-
         if (animator == null)
         {
             Debug.LogError($"[BattleUnit] No Animator found on {name}");
@@ -85,9 +78,7 @@ public class BattleUnit : MonoBehaviour
 
     private void CacheStartTransform()
     {
-        if (visualRoot == null)
-            return;
-
+        if (visualRoot == null) return;
         startPosition = visualRoot.position;
         startRotation = visualRoot.rotation;
     }
@@ -100,9 +91,12 @@ public class BattleUnit : MonoBehaviour
         if (target == null || target.IsDead || animator == null || visualRoot == null)
             yield break;
 
+        Vector3 directionToTarget =
+            (target.transform.position - visualRoot.position).normalized;
+
         Vector3 attackPosition =
             target.transform.position -
-            target.transform.forward * 1.5f;
+            directionToTarget * 1.5f;
 
         yield return MoveTo(attackPosition, 0.15f);
         FaceTarget(target.transform.position);
@@ -171,7 +165,6 @@ public class BattleUnit : MonoBehaviour
 
         animator?.SetTrigger(HIT_TRIGGER);
 
-        // ✅ Player-only health sync (unchanged logic)
         if (!isEnemy)
         {
             characterData.currentHealth = currentHealth;
@@ -191,9 +184,6 @@ public class BattleUnit : MonoBehaviour
             animator?.SetTrigger(DEATH_TRIGGER);
     }
 
-    // =========================
-    // MOVEMENT
-    // =========================
     private IEnumerator MoveTo(Vector3 destination, float duration)
     {
         Vector3 start = visualRoot.position;

@@ -15,7 +15,7 @@ MonoBehaviour:
   characterName: Lacryma
   level: 1
   maxHealth: 215
-  currentHealth: 215
+  currentHealth: 173
   maxSkillPoints: 6
   currentSkillPoints: 6
   attack: 14
