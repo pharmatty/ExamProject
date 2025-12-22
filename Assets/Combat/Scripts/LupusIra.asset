@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 08739a49a8ae6e84abdd263900c5975b, type: 3}
-  m_Name: SkillData2
+  m_Name: LupusIra
   m_EditorClassIdentifier: Assembly-CSharp::SkillData
   skillName: Lupus Ira
   skillPointCost: 3
