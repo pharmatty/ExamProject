@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 64ce74c36ec896d42a70b7451202a4da
+ShaderImporter:
+  externalObjects: {}
+  defaultTextures: []
+  nonModifiableTextures: []
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 78795
+  packageName: 'Poly Art: Wolf'
+  packageVersion: 4.0a
+  assetPath: Assets/Malbers Animations/Common/Shaders/Amplify Shader Editor/Golem
+    Shader.shader
+  uploadId: 807600

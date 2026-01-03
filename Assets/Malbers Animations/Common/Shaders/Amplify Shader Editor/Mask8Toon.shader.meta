@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 605d1e14bd910db49aa50378eb8e118c
+ShaderImporter:
+  externalObjects: {}
+  defaultTextures: []
+  nonModifiableTextures: []
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 78795
+  packageName: 'Poly Art: Wolf'
+  packageVersion: 4.0a
+  assetPath: Assets/Malbers Animations/Common/Shaders/Amplify Shader Editor/Mask8Toon.shader
+  uploadId: 807600

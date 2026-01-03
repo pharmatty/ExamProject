@@ -9,6 +9,8 @@ public class CombatManager : MonoBehaviour
     public enum CombatState
     {
         PlayerCommand,
+        SkillSelect,
+        ItemSelect,
         TargetSelection,
         EnemyTurn,
         Busy
@@ -24,21 +26,31 @@ public class CombatManager : MonoBehaviour
     }
 
     private CombatState state;
+    private PlayerCommand selectedCommand = PlayerCommand.Attack;
 
-    [Header("Spawn Points")]
-    public Transform[] playerSpawnPoints;
-    public Transform[] enemySpawnPoints;
+    public enum PlayerCommand
+    {
+        Attack,
+        Skill,
+        Item,
+        Escape
+    }
 
-    [Header("Prefabs")]
-    public GameObject playerBattleUnitPrefab;
-
-    [Header("Enemy Database")]
-    public List<EnemyData> possibleEnemies = new();
-
-    [Header("Runtime Units")]
+    // ========================= UNITS =========================
     public List<BattleUnit> playerUnits = new();
     public List<BattleUnit> enemyUnits = new();
+    private int currentTargetIndex = -1;
 
+    // ========================= SKILLS / ITEMS =========================
+    [Header("Player Skills")]
+    public List<SkillData> availableSkills = new();
+    private int selectedSkillIndex = 0;
+
+    [Header("Player Items")]
+    public List<ItemData> availableItems = new();
+    private int selectedItemIndex = 0;
+
+    // ========================= INPUT (RESTORED) =========================
     [Header("Input")]
     public InputActionAsset inputActions;
 
@@ -48,66 +60,62 @@ public class CombatManager : MonoBehaviour
     private InputAction left;
     private InputAction right;
 
-    [Header("UI")]
+    // ========================= UI / CAMERAS =========================
     public BattleUIManager uiManager;
 
-    [Header("Cinemachine Cameras")]
     public CinemachineCamera camBattleStart;
     public CinemachineCamera camPlayerCommand;
     public CinemachineCamera camTargetSelection;
     public CinemachineCamera camAttack;
     public CinemachineCamera camEnemyAttack;
 
-    [Header("Target Selection Camera")]
-    public float targetCamDistance = 6f;
-    public float targetCamHeight = 2f;
-    public float enemyLookHeight = 1.2f;
-
-    [Header("Enemy Attack Camera")]
-    public float enemyAttackCamDistance = 4f;
-    public float enemyAttackCamHeight = 2f;
-
-    [Header("Camera Smoothing")]
-    public float cameraMoveSmoothTime = 0.12f;
-    public float cameraRotateSpeed = 14f;
+    public Transform[] playerSpawnPoints;
+    public Transform[] enemySpawnPoints;
+    public GameObject playerBattleUnitPrefab;
+    public List<EnemyData> possibleEnemies = new();
 
     private Vector3 desiredCamPosition;
     private Vector3 camVelocity;
     private Transform desiredLookTarget;
 
-    private int currentTargetIndex = -1;
+    public float targetCamDistance = 6f;
+    public float targetCamHeight = 2f;
+    public float enemyLookHeight = 1.2f;
 
-    // =========================
-    // INPUT
-    // =========================
+    public float enemyAttackCamDistance = 4f;
+    public float enemyAttackCamHeight = 2f;
+
+    public float cameraMoveSmoothTime = 0.12f;
+    public float cameraRotateSpeed = 14f;
+
+    // ========================= INPUT ENABLE =========================
     private void OnEnable()
     {
         combatMap = inputActions.FindActionMap("CombatControls", true);
         combatMap.Enable();
 
         confirm = combatMap.FindAction("Confirm");
-        back = combatMap.FindAction("Back");
-        left = combatMap.FindAction("TargetLeft");
-        right = combatMap.FindAction("TargetRight");
+        back    = combatMap.FindAction("Back");
+        left    = combatMap.FindAction("TargetLeft");
+        right   = combatMap.FindAction("TargetRight");
 
         confirm.performed += OnConfirm;
-        back.performed += OnBack;
-        left.performed += OnLeft;
-        right.performed += OnRight;
+        back.performed    += OnBack;
+        left.performed    += OnLeft;
+        right.performed   += OnRight;
     }
 
     private void OnDisable()
     {
         confirm.performed -= OnConfirm;
-        back.performed -= OnBack;
-        left.performed -= OnLeft;
-        right.performed -= OnRight;
+        back.performed    -= OnBack;
+        left.performed    -= OnLeft;
+        right.performed   -= OnRight;
+
         combatMap.Disable();
     }
 
-    // =========================
-    // SETUP
-    // =========================
+    // ========================= STARTUP =========================
     private void Start()
     {
         if (uiManager == null)
@@ -115,26 +123,47 @@ public class CombatManager : MonoBehaviour
 
         SpawnPlayerUnits();
         SpawnEnemyUnits();
-        SyncPlayerHealthUI();
+        SyncPlayerUI();
 
         StartCoroutine(StartCombatSequence());
     }
 
-    private void SyncPlayerHealthUI()
+    private void SyncPlayerUI()
     {
-        if (uiManager == null || playerUnits.Count == 0)
+        if (playerUnits.Count == 0 || uiManager == null)
+            return;
+
+        var p = playerUnits[0];
+
+        uiManager.UpdateHealth(p.characterData.currentHealth, p.characterData.maxHealth);
+        uiManager.UpdateSP(p.characterData.currentSkillPoints, p.characterData.maxSkillPoints);
+
+        RefreshCommandAvailability();
+    }
+
+    // ========================= SP → SKILL FADE =========================
+    private void RefreshCommandAvailability()
+    {
+        if (playerUnits.Count == 0 || uiManager == null)
             return;
 
         BattleUnit player = playerUnits[0];
-        uiManager.UpdateHealth(
-            player.characterData.currentHealth,
-            player.characterData.maxHealth
-        );
+
+        bool canUseSkill = false;
+
+        foreach (var skill in availableSkills)
+        {
+            if (player.CanAffordSP(skill.skillPointCost))
+            {
+                canUseSkill = true;
+                break;
+            }
+        }
+
+        uiManager.SetCommandInteractable(uiManager.skillsLabelGroup, canUseSkill);
     }
 
-    // =========================
-    // UPDATE (TARGET CAMERA)
-    // =========================
+    // ========================= UPDATE CAMERA =========================
     private void Update()
     {
         if (state != CombatState.TargetSelection)
@@ -160,55 +189,70 @@ public class CombatManager : MonoBehaviour
         }
     }
 
-    // =========================
-    // FLOW
-    // =========================
+    // ========================= COMBAT FLOW =========================
     private IEnumerator StartCombatSequence()
     {
         state = CombatState.Busy;
         SetCamera(CameraState.BattleStart);
-        yield return new WaitForSeconds(4f);
+
+        yield return new WaitForSeconds(2f);
+
         EnterPlayerCommand();
     }
 
     private void EnterPlayerCommand()
     {
         state = CombatState.PlayerCommand;
-        uiManager?.ShowCommandPanel(true);
-        uiManager?.HighlightCommand("Attack");
+
+        uiManager.ShowCommandPanel(true);
+        selectedCommand = PlayerCommand.Attack;
+
+        RefreshCommandAvailability();
+
         SetCamera(CameraState.PlayerCommand);
     }
 
-    private void EnterTargetSelection()
-    {
-        if (enemyUnits.Count == 0)
-            return;
-
-        state = CombatState.TargetSelection;
-        uiManager?.ShowCommandPanel(false);
-        SelectFirstAliveTarget();
-        UpdateTargetSelectionCamera(true);
-        SetCamera(CameraState.TargetSelection);
-    }
-
-    // =========================
-    // INPUT HANDLERS
-    // =========================
+    // ========================= INPUT =========================
     private void OnConfirm(InputAction.CallbackContext ctx)
     {
         if (state == CombatState.PlayerCommand)
+        {
+            switch (selectedCommand)
+            {
+                case PlayerCommand.Attack:
+                    EnterTargetSelection();
+                    break;
+
+                case PlayerCommand.Skill:
+                    state = CombatState.SkillSelect;
+                    break;
+
+                case PlayerCommand.Item:
+                    state = CombatState.ItemSelect;
+                    break;
+            }
+        }
+        else if (state == CombatState.SkillSelect)
+        {
             EnterTargetSelection();
+        }
         else if (state == CombatState.TargetSelection)
-            ConfirmAttack();
+        {
+            if (selectedCommand == PlayerCommand.Attack)
+                ConfirmAttack();
+            else if (selectedCommand == PlayerCommand.Skill)
+                ConfirmSkill();
+        }
     }
 
     private void OnBack(InputAction.CallbackContext ctx)
     {
-        if (state != CombatState.TargetSelection)
-            return;
-
-        currentTargetIndex = -1;
-        EnterPlayerCommand(); // ✅ returns camera + UI
+        if (state == CombatState.TargetSelection ||
+            state == CombatState.SkillSelect ||
+            state == CombatState.ItemSelect)
+        {
+            EnterPlayerCommand();
+        }
     }
 
     private void OnLeft(InputAction.CallbackContext ctx)
@@ -223,9 +267,21 @@ public class CombatManager : MonoBehaviour
             CycleTarget(1);
     }
 
-    // =========================
-    // TARGETING
-    // =========================
+    // ========================= TARGET SELECTION =========================
+    private void EnterTargetSelection()
+    {
+        if (enemyUnits.Count == 0)
+            return;
+
+        state = CombatState.TargetSelection;
+        uiManager.ShowCommandPanel(false);
+
+        SelectFirstAliveTarget();
+        UpdateTargetSelectionCamera(true);
+
+        SetCamera(CameraState.TargetSelection);
+    }
+
     private void SelectFirstAliveTarget()
     {
         for (int i = 0; i < enemyUnits.Count; i++)
@@ -240,56 +296,50 @@ public class CombatManager : MonoBehaviour
         currentTargetIndex = -1;
     }
 
-    private void CycleTarget(int direction)
+    private void CycleTarget(int dir)
     {
         if (enemyUnits.Count == 0)
             return;
 
-        int startIndex = currentTargetIndex;
-        if (startIndex < 0)
-            startIndex = 0;
+        int start = currentTargetIndex;
+        if (start < 0) start = 0;
 
         do
         {
-            currentTargetIndex += direction;
+            currentTargetIndex += dir;
 
             if (currentTargetIndex < 0)
                 currentTargetIndex = enemyUnits.Count - 1;
+
             if (currentTargetIndex >= enemyUnits.Count)
                 currentTargetIndex = 0;
 
-        } while ((enemyUnits[currentTargetIndex] == null || enemyUnits[currentTargetIndex].IsDead) &&
-                 currentTargetIndex != startIndex);
+        } while ((enemyUnits[currentTargetIndex] == null ||
+                  enemyUnits[currentTargetIndex].IsDead) &&
+                  currentTargetIndex != start);
 
         UpdateTargetSelectionCamera(false);
     }
 
-    // =========================
-    // TARGET SELECTION CAMERA (FIXED SIDE)
-    // =========================
     private void UpdateTargetSelectionCamera(bool instant)
     {
-        if (currentTargetIndex < 0 || currentTargetIndex >= enemyUnits.Count)
+        BattleUnit target = enemyUnits[currentTargetIndex];
+        if (target == null)
             return;
 
-        BattleUnit targetUnit = enemyUnits[currentTargetIndex];
-        if (targetUnit == null || targetUnit.spawnIndex < 0)
-            return;
-
-        Vector3 enemyPos = enemySpawnPoints[targetUnit.spawnIndex].position;
+        Vector3 enemyPos  = enemySpawnPoints[target.spawnIndex].position;
         Vector3 playerPos = playerSpawnPoints[0].position;
 
-        Vector3 dirToPlayer = playerPos - enemyPos;
-        dirToPlayer.y = 0f;
-        dirToPlayer.Normalize();
+        Vector3 dir = (playerPos - enemyPos);
+        dir.y = 0;
+        dir.Normalize();
 
-        // ✅ CAMERA ON PLAYER SIDE OF ENEMY
         desiredCamPosition =
             enemyPos +
-            dirToPlayer * targetCamDistance +
+            dir * targetCamDistance +
             Vector3.up * targetCamHeight;
 
-        desiredLookTarget = enemySpawnPoints[targetUnit.spawnIndex];
+        desiredLookTarget = enemySpawnPoints[target.spawnIndex];
 
         if (instant)
         {
@@ -299,31 +349,64 @@ public class CombatManager : MonoBehaviour
         }
     }
 
+    // ========================= ATTACK =========================
     private void ConfirmAttack()
     {
         BattleUnit attacker = playerUnits[0];
-        BattleUnit target = enemyUnits[currentTargetIndex];
+        BattleUnit target   = enemyUnits[currentTargetIndex];
 
         if (attacker == null || target == null || target.IsDead)
             return;
 
         state = CombatState.Busy;
+
         SetCamera(CameraState.Attack);
         StartCoroutine(AttackSequence(attacker, target));
     }
 
     private IEnumerator AttackSequence(BattleUnit attacker, BattleUnit target)
     {
-        yield return StartCoroutine(attacker.PerformAttack(target));
+        yield return attacker.PerformAttack(target);
         yield return new WaitForSeconds(0.25f);
 
-        yield return StartCoroutine(EnemyTurnSequence());
+        yield return EnemyTurnSequence();
+
+        RefreshCommandAvailability();
         EnterPlayerCommand();
     }
 
-    // =========================
-    // ENEMY TURN
-    // =========================
+    // ========================= SKILL =========================
+    private void ConfirmSkill()
+    {
+        BattleUnit user   = playerUnits[0];
+        BattleUnit target = enemyUnits[currentTargetIndex];
+        SkillData skill   = availableSkills[selectedSkillIndex];
+
+        if (!user.CanAffordSP(skill.skillPointCost))
+        {
+            Debug.Log("Not enough SP for " + skill.skillName);
+            EnterPlayerCommand();
+            return;
+        }
+
+        user.SpendSP(skill.skillPointCost);
+        RefreshCommandAvailability();
+
+        state = CombatState.Busy;
+        SetCamera(CameraState.Attack);
+
+        StartCoroutine(SkillSequence(user, target));
+    }
+
+    private IEnumerator SkillSequence(BattleUnit user, BattleUnit target)
+    {
+        yield return user.PerformSkill(target);
+        yield return EnemyTurnSequence();
+
+        EnterPlayerCommand();
+    }
+
+    // ========================= ENEMY TURN =========================
     private IEnumerator EnemyTurnSequence()
     {
         state = CombatState.EnemyTurn;
@@ -333,79 +416,69 @@ public class CombatManager : MonoBehaviour
             if (enemy == null || enemy.IsDead)
                 continue;
 
-            EnemyAI ai = enemy.GetComponent<EnemyAI>();
-            if (ai == null)
-                continue;
-
-            BattleUnit target = playerUnits.Find(p => p != null && !p.IsDead);
-            if (target == null)
-                yield break;
+            BattleUnit target = playerUnits[0];
 
             SetupEnemyAttackCamera(enemy.spawnIndex);
             SetCamera(CameraState.EnemyAttack);
 
-            yield return StartCoroutine(ai.TakeTurn(target));
+            EnemyAI ai = enemy.GetComponent<EnemyAI>();
+            if (ai != null)
+                yield return ai.TakeTurn(target);
+
             yield return new WaitForSeconds(0.4f);
         }
     }
 
     private void SetupEnemyAttackCamera(int spawnIndex)
     {
-        Vector3 enemyPos = enemySpawnPoints[spawnIndex].position;
+        Vector3 enemyPos  = enemySpawnPoints[spawnIndex].position;
         Vector3 playerPos = playerSpawnPoints[0].position;
 
-        Vector3 dirToPlayer = playerPos - enemyPos;
-        dirToPlayer.y = 0f;
-        dirToPlayer.Normalize();
+        Vector3 dir = (playerPos - enemyPos);
+        dir.y = 0;
+        dir.Normalize();
 
         camEnemyAttack.transform.position =
             enemyPos -
-            dirToPlayer * enemyAttackCamDistance +
+            dir * enemyAttackCamDistance +
             Vector3.up * enemyAttackCamHeight;
 
         camEnemyAttack.transform.LookAt(playerPos + Vector3.up * enemyLookHeight);
     }
 
-    // =========================
-    // CAMERA SWITCHING
-    // =========================
+    // ========================= CAMERA SWITCH =========================
     private void SetCamera(CameraState cam)
     {
-        camBattleStart.Priority = 0;
-        camPlayerCommand.Priority = 0;
+        camBattleStart.Priority     = 0;
+        camPlayerCommand.Priority   = 0;
         camTargetSelection.Priority = 0;
-        camAttack.Priority = 0;
-        camEnemyAttack.Priority = 0;
+        camAttack.Priority          = 0;
+        camEnemyAttack.Priority     = 0;
 
         switch (cam)
         {
-            case CameraState.BattleStart: camBattleStart.Priority = 10; break;
-            case CameraState.PlayerCommand: camPlayerCommand.Priority = 10; break;
+            case CameraState.BattleStart:     camBattleStart.Priority   = 10; break;
+            case CameraState.PlayerCommand:   camPlayerCommand.Priority = 10; break;
             case CameraState.TargetSelection: camTargetSelection.Priority = 10; break;
-            case CameraState.Attack: camAttack.Priority = 10; break;
-            case CameraState.EnemyAttack: camEnemyAttack.Priority = 10; break;
+            case CameraState.Attack:          camAttack.Priority        = 10; break;
+            case CameraState.EnemyAttack:     camEnemyAttack.Priority   = 10; break;
         }
     }
 
-    // =========================
-    // SPAWNING
-    // =========================
+    // ========================= SPAWNING =========================
     private void SpawnPlayerUnits()
     {
         var party = GameManager.Instance.partyData.currentParty;
 
-        for (int i = 0; i < party.Count && i < playerSpawnPoints.Length; i++)
-        {
-            GameObject obj = Instantiate(
-                playerBattleUnitPrefab,
-                playerSpawnPoints[i].position,
-                playerSpawnPoints[i].rotation
-            );
+        GameObject obj = Instantiate(
+            playerBattleUnitPrefab,
+            playerSpawnPoints[0].position,
+            playerSpawnPoints[0].rotation
+        );
 
-            BattleUnit unit = obj.GetComponent<BattleUnit>();
-            unit.Initialize(party[i], null, false);
-            playerUnits.Add(unit);
-        }
+        BattleUnit unit = obj.GetComponent<BattleUnit>();
+        unit.Initialize(party[0], null, false);
+        playerUnits.Add(unit);
     }
 
     private void SpawnEnemyUnits()

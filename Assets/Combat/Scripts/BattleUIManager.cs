@@ -1,43 +1,78 @@
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
 
 public class BattleUIManager : MonoBehaviour
 {
-    [Header("Command Labels")]
-    public TextMeshProUGUI attackLabel;
-    public TextMeshProUGUI skillsLabel;
-    public TextMeshProUGUI itemsLabel;
-    public TextMeshProUGUI runLabel;
-
-    [Header("HP Display")]
+    [Header("Player Status Text")]
     public TextMeshProUGUI currentHPText;
     public TextMeshProUGUI maxHPText;
+    public TextMeshProUGUI currentSPText;
 
-    [Header("Colors")]
-    public Color normalColor = Color.white;
-    public Color highlightColor = Color.yellow;
+    [Header("Command Panel")]
+    public GameObject commandPanel;
 
-    public void HighlightCommand(string command)
-    {
-        attackLabel.color = normalColor;
-        skillsLabel.color = normalColor;
-        itemsLabel.color = normalColor;
-        runLabel.color = normalColor;
+    // CanvasGroup on SkillsLabel
+    public CanvasGroup skillsLabelGroup;
 
-        if (command == "Attack") attackLabel.color = highlightColor;
-        if (command == "Skills") skillsLabel.color = highlightColor;
-        if (command == "Items") itemsLabel.color = highlightColor;
-        if (command == "Run") runLabel.color = highlightColor;
-    }
+    // (optional future)
+    public CanvasGroup itemsLabelGroup;
 
-    public void ShowCommandPanel(bool show)
-    {
-        gameObject.SetActive(show);
-    }
+    [Header("Command Labels")]
+    public GameObject attackLabel;
+    public GameObject skillsLabel;
+    public GameObject itemsLabel;
+    public GameObject runLabel;
 
+    // =========================
+    // STATUS UI (BACK-COMPAT)
+    // =========================
+
+    // Existing API used by CombatManager / BattleUnit
     public void UpdateHealth(int current, int max)
     {
-        currentHPText.text = current.ToString();
-        maxHPText.text = max.ToString();
+        UpdateHP(current, max);
     }
+
+    public void UpdateHP(int current, int max)
+    {
+        if (currentHPText != null)
+            currentHPText.text = current.ToString();
+
+        if (maxHPText != null)
+            maxHPText.text = max.ToString();
+    }
+
+    public void UpdateSP(int current, int max)
+    {
+        // we only show current SP in UI, but
+        // we keep the signature for compatibility
+        if (currentSPText != null)
+            currentSPText.text = current.ToString();
+    }
+
+    // =========================
+    // COMMAND PANEL
+    // =========================
+    public void ShowCommandPanel(bool show)
+    {
+        if (commandPanel != null)
+            commandPanel.SetActive(show);
+    }
+
+    // =========================
+    // FADE-OUT SUPPORT
+    // =========================
+    public void SetCommandInteractable(CanvasGroup group, bool isEnabled)
+    {
+        if (group == null)
+            return;
+
+        group.alpha = isEnabled ? 1f : 0.35f;
+        group.interactable = isEnabled;
+        group.blocksRaycasts = isEnabled;
+    }
+
+    // No highlight logic — input-driven
+    public void HighlightCommand(string _ignored) {}
 }

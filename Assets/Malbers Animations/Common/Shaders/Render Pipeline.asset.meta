@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: e6f4e4f2822fc524b983adea12358619
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 78795
+  packageName: 'Poly Art: Wolf'
+  packageVersion: 4.0a
+  assetPath: Assets/Malbers Animations/Common/Shaders/Render Pipeline.asset
+  uploadId: 807600

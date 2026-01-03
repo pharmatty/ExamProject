@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 56e91ddfff913b148a557bfdbd9613d0
+ShaderImporter:
+  externalObjects: {}
+  defaultTextures: []
+  nonModifiableTextures: []
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 78795
+  packageName: 'Poly Art: Wolf'
+  packageVersion: 4.0a
+  assetPath: Assets/Malbers Animations/Common/Shaders/Amplify Shader Editor/Wind
+    Shader.shader
+  uploadId: 807600
