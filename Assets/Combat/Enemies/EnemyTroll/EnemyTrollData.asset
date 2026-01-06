@@ -13,10 +13,11 @@ MonoBehaviour:
   m_Name: EnemyTrollData
   m_EditorClassIdentifier: Assembly-CSharp::EnemyData
   enemyName: Donian Troll
-  maxHealth: 250
+  maxHealth: 20
   attack: 14
   defense: 3
   speed: 5
+  attackStateName: Attack
   enemySkills: []
   expReward: 10
   goldReward: 5

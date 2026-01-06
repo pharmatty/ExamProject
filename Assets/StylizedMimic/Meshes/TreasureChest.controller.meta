@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: cb1e3f4c35e0f964c992707d8c415892
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 9100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 250045
+  packageName: Stylized Fantasy Mimic Treasure Chest
+  packageVersion: 1.0
+  assetPath: Assets/StylizedMimic/Meshes/TreasureChest.controller
+  uploadId: 803306

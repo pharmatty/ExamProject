@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 6e98b8398ed07a642906ae80f0179a00
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 250045
+  packageName: Stylized Fantasy Mimic Treasure Chest
+  packageVersion: 1.0
+  assetPath: Assets/StylizedMimic/Materials/M_Chest_Mimic_Or.mat
+  uploadId: 803306

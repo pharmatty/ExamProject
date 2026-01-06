@@ -109,6 +109,9 @@ MonoBehaviour:
   spawnIndex: -1
   animator: {fileID: 3838226667804411984}
   cameraFocusPoint: {fileID: 6309354888343693097}
+  damageNumberPrefab: {fileID: 7894095204515971592, guid: 8d5d8901036f2974fb71d9a452628f21, type: 3}
+  healNumberPrefab: {fileID: 8951152318378471373, guid: 21ebf44430e1f294bb665c44a4cbe471, type: 3}
+  damageNumberAnchor: {fileID: 4029506353406473267}
 --- !u!114 &5288287501550221766
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2302,5 +2305,10 @@ PrefabInstance:
 --- !u!4 &1522402342203973148 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: f5f9d19d592a91e4db6d6e1a28b6e27d, type: 3}
+  m_PrefabInstance: {fileID: 1344906818739452407}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &4029506353406473267 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -6538735118791488060, guid: f5f9d19d592a91e4db6d6e1a28b6e27d, type: 3}
   m_PrefabInstance: {fileID: 1344906818739452407}
   m_PrefabAsset: {fileID: 0}

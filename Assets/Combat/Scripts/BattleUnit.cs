@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using DamageNumbersPro;   // <-- Damage Numbers Pro namespace
 
 public class BattleUnit : MonoBehaviour
 {
@@ -23,6 +24,14 @@ public class BattleUnit : MonoBehaviour
     [Header("References")]
     public Animator animator;
     public Transform cameraFocusPoint;
+
+    // =========================
+    // DAMAGE / HEAL NUMBERS
+    // =========================
+    [Header("Damage / Heal Numbers")]
+    public DamageNumber damageNumberPrefab;   // Assign mesh damage number prefab here
+    public DamageNumber healNumberPrefab;     // Optional heal prefab
+    public Transform damageNumberAnchor;      // Optional anchor (head/chest); falls back if null
 
     private Transform visualRoot;
     private Vector3 startPosition;
@@ -227,6 +236,49 @@ public class BattleUnit : MonoBehaviour
     }
 
     // =========================
+    // DAMAGE NUMBERS HELPERS
+    // =========================
+    private Transform GetDamageAnchor()
+    {
+        // Prefer explicit anchor, then cameraFocusPoint, then this transform
+        if (damageNumberAnchor != null)
+            return damageNumberAnchor;
+
+        if (cameraFocusPoint != null)
+            return cameraFocusPoint;
+
+        return transform;
+    }
+
+    private void ShowDamageNumber(int amount)
+    {
+        if (damageNumberPrefab == null || amount == 0)
+            return;
+
+        Transform anchor = GetDamageAnchor();
+
+        // Use overload: Spawn(Vector3 position, int number)
+        DamageNumber dn = damageNumberPrefab.Spawn(anchor.position, amount);
+
+        // Make it follow the unit
+        if (dn != null)
+            dn.followedTarget = anchor;
+    }
+
+    public void ShowHealNumber(int amount)
+    {
+        if (healNumberPrefab == null || amount == 0)
+            return;
+
+        Transform anchor = GetDamageAnchor();
+
+        DamageNumber dn = healNumberPrefab.Spawn(anchor.position, amount);
+
+        if (dn != null)
+            dn.followedTarget = anchor;
+    }
+
+    // =========================
     // DAMAGE
     // =========================
     public int CalculateDamageFrom(BattleUnit attacker)
@@ -241,6 +293,10 @@ public class BattleUnit : MonoBehaviour
     {
         int dmg = CalculateDamageFrom(attacker);
         currentHealth = Mathf.Max(0, currentHealth - dmg);
+
+        // 👉 Spawn floating damage number on hit
+        if (dmg > 0)
+            ShowDamageNumber(dmg);
 
         animator?.SetTrigger(HIT_TRIGGER);
 

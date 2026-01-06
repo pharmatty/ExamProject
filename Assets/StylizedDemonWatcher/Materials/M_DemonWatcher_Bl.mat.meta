@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: bf1984457bd70c9429922dd18e3434ff
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 235891
+  packageName: Stylized Fantasy Demon Watcher
+  packageVersion: 1.0
+  assetPath: Assets/StylizedDemonWatcher/Materials/M_DemonWatcher_Bl.mat
+  uploadId: 803192

@@ -2,7 +2,6 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.InputSystem;
-using Unity.Cinemachine;
 
 public class CombatManager : MonoBehaviour
 {
@@ -13,16 +12,8 @@ public class CombatManager : MonoBehaviour
         ItemSelect,
         TargetSelection,
         EnemyTurn,
-        Busy
-    }
-
-    public enum CameraState
-    {
-        BattleStart,
-        PlayerCommand,
-        TargetSelection,
-        Attack,
-        EnemyAttack
+        Busy,
+        Victory
     }
 
     private CombatState state;
@@ -50,7 +41,7 @@ public class CombatManager : MonoBehaviour
     public List<ItemData> availableItems = new();
     private int selectedItemIndex = 0;
 
-    // ========================= INPUT (RESTORED) =========================
+    // ========================= INPUT =========================
     [Header("Input")]
     public InputActionAsset inputActions;
 
@@ -60,35 +51,26 @@ public class CombatManager : MonoBehaviour
     private InputAction left;
     private InputAction right;
 
-    // ========================= UI / CAMERAS =========================
+    // ========================= UI =========================
     public BattleUIManager uiManager;
 
-    public CinemachineCamera camBattleStart;
-    public CinemachineCamera camPlayerCommand;
-    public CinemachineCamera camTargetSelection;
-    public CinemachineCamera camAttack;
-    public CinemachineCamera camEnemyAttack;
+    // ========================= CAMERA =========================
+    public BattleCameraController cameraController;
 
+    // ========================= SPAWNS =========================
     public Transform[] playerSpawnPoints;
     public Transform[] enemySpawnPoints;
     public GameObject playerBattleUnitPrefab;
     public List<EnemyData> possibleEnemies = new();
 
-    private Vector3 desiredCamPosition;
-    private Vector3 camVelocity;
-    private Transform desiredLookTarget;
+    // ========================= VICTORY (NEW) =========================
+    public VictoryUI victoryUI;
 
-    public float targetCamDistance = 6f;
-    public float targetCamHeight = 2f;
-    public float enemyLookHeight = 1.2f;
+    [Header("Audio")]
+    public AudioSource musicSource;
+    public AudioClip victoryMusic;
 
-    public float enemyAttackCamDistance = 4f;
-    public float enemyAttackCamHeight = 2f;
-
-    public float cameraMoveSmoothTime = 0.12f;
-    public float cameraRotateSpeed = 14f;
-
-    // ========================= INPUT ENABLE =========================
+    // ========================= ENABLE INPUT =========================
     private void OnEnable()
     {
         combatMap = inputActions.FindActionMap("CombatControls", true);
@@ -121,6 +103,9 @@ public class CombatManager : MonoBehaviour
         if (uiManager == null)
             uiManager = FindFirstObjectByType<BattleUIManager>();
 
+        if (cameraController == null)
+            cameraController = FindFirstObjectByType<BattleCameraController>();
+
         SpawnPlayerUnits();
         SpawnEnemyUnits();
         SyncPlayerUI();
@@ -141,7 +126,6 @@ public class CombatManager : MonoBehaviour
         RefreshCommandAvailability();
     }
 
-    // ========================= SP → SKILL FADE =========================
     private void RefreshCommandAvailability()
     {
         if (playerUnits.Count == 0 || uiManager == null)
@@ -163,37 +147,11 @@ public class CombatManager : MonoBehaviour
         uiManager.SetCommandInteractable(uiManager.skillsLabelGroup, canUseSkill);
     }
 
-    // ========================= UPDATE CAMERA =========================
-    private void Update()
-    {
-        if (state != CombatState.TargetSelection)
-            return;
-
-        camTargetSelection.transform.position = Vector3.SmoothDamp(
-            camTargetSelection.transform.position,
-            desiredCamPosition,
-            ref camVelocity,
-            cameraMoveSmoothTime
-        );
-
-        if (desiredLookTarget != null)
-        {
-            Vector3 lookPoint = desiredLookTarget.position + Vector3.up * enemyLookHeight;
-            Quaternion rot = Quaternion.LookRotation(lookPoint - camTargetSelection.transform.position);
-
-            camTargetSelection.transform.rotation = Quaternion.Slerp(
-                camTargetSelection.transform.rotation,
-                rot,
-                Time.deltaTime * cameraRotateSpeed
-            );
-        }
-    }
-
     // ========================= COMBAT FLOW =========================
     private IEnumerator StartCombatSequence()
     {
         state = CombatState.Busy;
-        SetCamera(CameraState.BattleStart);
+        cameraController.SetCamera(BattleCameraController.CameraState.BattleStart);
 
         yield return new WaitForSeconds(2f);
 
@@ -209,7 +167,7 @@ public class CombatManager : MonoBehaviour
 
         RefreshCommandAvailability();
 
-        SetCamera(CameraState.PlayerCommand);
+        cameraController.SetCamera(BattleCameraController.CameraState.PlayerCommand);
     }
 
     // ========================= INPUT =========================
@@ -279,7 +237,7 @@ public class CombatManager : MonoBehaviour
         SelectFirstAliveTarget();
         UpdateTargetSelectionCamera(true);
 
-        SetCamera(CameraState.TargetSelection);
+        cameraController.SetCamera(BattleCameraController.CameraState.TargetSelection);
     }
 
     private void SelectFirstAliveTarget()
@@ -327,26 +285,11 @@ public class CombatManager : MonoBehaviour
         if (target == null)
             return;
 
-        Vector3 enemyPos  = enemySpawnPoints[target.spawnIndex].position;
-        Vector3 playerPos = playerSpawnPoints[0].position;
-
-        Vector3 dir = (playerPos - enemyPos);
-        dir.y = 0;
-        dir.Normalize();
-
-        desiredCamPosition =
-            enemyPos +
-            dir * targetCamDistance +
-            Vector3.up * targetCamHeight;
-
-        desiredLookTarget = enemySpawnPoints[target.spawnIndex];
-
-        if (instant)
-        {
-            camTargetSelection.transform.position = desiredCamPosition;
-            camTargetSelection.transform.LookAt(enemyPos + Vector3.up * enemyLookHeight);
-            camVelocity = Vector3.zero;
-        }
+        cameraController.UpdateTargetSelectionCamera(
+            enemySpawnPoints[target.spawnIndex],
+            playerSpawnPoints[0],
+            instant
+        );
     }
 
     // ========================= ATTACK =========================
@@ -360,7 +303,7 @@ public class CombatManager : MonoBehaviour
 
         state = CombatState.Busy;
 
-        SetCamera(CameraState.Attack);
+        cameraController.SetCamera(BattleCameraController.CameraState.Attack);
         StartCoroutine(AttackSequence(attacker, target));
     }
 
@@ -368,6 +311,12 @@ public class CombatManager : MonoBehaviour
     {
         yield return attacker.PerformAttack(target);
         yield return new WaitForSeconds(0.25f);
+
+        if (AllEnemiesDead())
+        {
+            yield return HandleVictory();
+            yield break;
+        }
 
         yield return EnemyTurnSequence();
 
@@ -393,7 +342,7 @@ public class CombatManager : MonoBehaviour
         RefreshCommandAvailability();
 
         state = CombatState.Busy;
-        SetCamera(CameraState.Attack);
+        cameraController.SetCamera(BattleCameraController.CameraState.Attack);
 
         StartCoroutine(SkillSequence(user, target));
     }
@@ -401,6 +350,13 @@ public class CombatManager : MonoBehaviour
     private IEnumerator SkillSequence(BattleUnit user, BattleUnit target)
     {
         yield return user.PerformSkill(target);
+
+        if (AllEnemiesDead())
+        {
+            yield return HandleVictory();
+            yield break;
+        }
+
         yield return EnemyTurnSequence();
 
         EnterPlayerCommand();
@@ -418,8 +374,14 @@ public class CombatManager : MonoBehaviour
 
             BattleUnit target = playerUnits[0];
 
-            SetupEnemyAttackCamera(enemy.spawnIndex);
-            SetCamera(CameraState.EnemyAttack);
+            cameraController.SetupEnemyAttackCamera(
+                enemySpawnPoints[enemy.spawnIndex],
+                playerSpawnPoints[0]
+            );
+
+            cameraController.SetCamera(
+                BattleCameraController.CameraState.EnemyAttack
+            );
 
             EnemyAI ai = enemy.GetComponent<EnemyAI>();
             if (ai != null)
@@ -427,42 +389,72 @@ public class CombatManager : MonoBehaviour
 
             yield return new WaitForSeconds(0.4f);
         }
-    }
 
-    private void SetupEnemyAttackCamera(int spawnIndex)
-    {
-        Vector3 enemyPos  = enemySpawnPoints[spawnIndex].position;
-        Vector3 playerPos = playerSpawnPoints[0].position;
-
-        Vector3 dir = (playerPos - enemyPos);
-        dir.y = 0;
-        dir.Normalize();
-
-        camEnemyAttack.transform.position =
-            enemyPos -
-            dir * enemyAttackCamDistance +
-            Vector3.up * enemyAttackCamHeight;
-
-        camEnemyAttack.transform.LookAt(playerPos + Vector3.up * enemyLookHeight);
-    }
-
-    // ========================= CAMERA SWITCH =========================
-    private void SetCamera(CameraState cam)
-    {
-        camBattleStart.Priority     = 0;
-        camPlayerCommand.Priority   = 0;
-        camTargetSelection.Priority = 0;
-        camAttack.Priority          = 0;
-        camEnemyAttack.Priority     = 0;
-
-        switch (cam)
+        if (AllEnemiesDead())
         {
-            case CameraState.BattleStart:     camBattleStart.Priority   = 10; break;
-            case CameraState.PlayerCommand:   camPlayerCommand.Priority = 10; break;
-            case CameraState.TargetSelection: camTargetSelection.Priority = 10; break;
-            case CameraState.Attack:          camAttack.Priority        = 10; break;
-            case CameraState.EnemyAttack:     camEnemyAttack.Priority   = 10; break;
+            yield return HandleVictory();
+            yield break;
         }
+
+        EnterPlayerCommand();
+    }
+
+    // ========================= VICTORY LOGIC =========================
+    private bool AllEnemiesDead()
+    {
+        foreach (var e in enemyUnits)
+        {
+            if (e != null && !e.IsDead)
+                return false;
+        }
+        return true;
+    }
+
+    private IEnumerator HandleVictory()
+    {
+        state = CombatState.Victory;
+
+        cameraController.SetCamera(BattleCameraController.CameraState.Victory);
+
+        if (musicSource != null && victoryMusic != null)
+        {
+            musicSource.Stop();
+            musicSource.clip = victoryMusic;
+            musicSource.Play();
+        }
+
+        BattleUnit player = playerUnits[0];
+        if (player != null && player.animator != null)
+            player.animator.SetTrigger("Win");
+
+        // wait until Win animation completes (with timeout)
+        float timeout = 4f;
+        float t = 0f;
+
+        while (t < timeout)
+        {
+            var info = player.animator.GetCurrentAnimatorStateInfo(0);
+            if (info.IsName("Win") && info.normalizedTime >= 1f)
+                break;
+
+            t += Time.deltaTime;
+            yield return null;
+        }
+
+        yield return new WaitForSeconds(0.25f);
+
+        // ⭐ NEW — Disable player BattleUnit AFTER Win animation
+        if (player != null)
+            player.gameObject.SetActive(false);
+
+        int totalExp = 0;
+        foreach (var e in enemyUnits)
+        {
+            if (e != null && e.enemyData != null)
+                totalExp += e.enemyData.expReward;
+        }
+
+        victoryUI.Show(totalExp);
     }
 
     // ========================= SPAWNING =========================

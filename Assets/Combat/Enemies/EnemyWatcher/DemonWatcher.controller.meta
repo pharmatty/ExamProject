@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: d3dff58582b5c8148b594cdbebdc0de4
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 9100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 235891
+  packageName: Stylized Fantasy Demon Watcher
+  packageVersion: 1.0
+  assetPath: Assets/StylizedDemonWatcher/Meshes/DemonWatcher.controller
+  uploadId: 803192

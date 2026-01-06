@@ -225,7 +225,7 @@ Material:
     - _DiffuseSmoothness: 1
     - _DiffuseThresholdOffset: 0.25
     - _Dissolve: 0
-    - _DissolveAmount: 0.5
+    - _DissolveAmount: 0
     - _DissolveBorderSize: 0.25
     - _DissolveMapScale: 1
     - _DrawnClampMax: 1
