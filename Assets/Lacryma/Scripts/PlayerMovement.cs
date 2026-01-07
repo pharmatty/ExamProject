@@ -13,6 +13,29 @@ public class PlayerMovement : MonoBehaviour
     public float jumpForce = 5f;
     public float gravity   = -9.81f;
 
+    [Header("Wolf Form")]
+    public GameObject humanModel;
+    public GameObject wolfModel;
+    public float wolfRunSpeed = 8f;
+    public float wolfAcceleration = 20f;
+
+    [Header("Transform FX")]
+    public AudioSource audioSource;
+    public AudioClip transformSfx;
+    public ParticleSystem transformVfx;
+    public Transform vfxAnchor;
+    public Vector3 vfxOffset;
+
+    [Header("Footsteps")]
+    public AudioSource footstepSource;
+    public AudioClip[] humanFootsteps;
+    public AudioClip[] wolfFootsteps;
+    public float stepInterval = 0.4f;   // time between steps when walking
+
+    private float stepTimer;
+
+    private bool isWolf;
+
     private CharacterController controller;
     private Animator anim;
     private Transform cam;
@@ -24,19 +47,24 @@ public class PlayerMovement : MonoBehaviour
     private float velocityY;
     private float currentSpeed;
 
+    private bool isJumping;
+
     private void Awake()
     {
-        controller   = GetComponent<CharacterController>();
-        anim         = GetComponentInChildren<Animator>();
-        cam          = Camera.main.transform;
-        playerInput  = GetComponent<PlayerInput>();
+        controller  = GetComponent<CharacterController>();
+        cam         = Camera.main.transform;
+        playerInput = GetComponent<PlayerInput>();
 
         moveAction = playerInput.actions["Move"];
+
+        humanModel.SetActive(true);
+        wolfModel.SetActive(false);
+
+        anim = humanModel.GetComponent<Animator>();
     }
 
     private void Update()
     {
-        // if this script is disabled, Update does not run at all
         if (!controller.enabled)
             return;
 
@@ -47,14 +75,48 @@ public class PlayerMovement : MonoBehaviour
 
     public void OnJump(InputAction.CallbackContext ctx)
     {
+        if (!ctx.performed || !controller.enabled)
+            return;
+
+        if (controller.isGrounded && !isJumping)
+        {
+            velocityY = jumpForce;
+            isJumping = true;
+        }
+    }
+
+    public void OnTransform(InputAction.CallbackContext ctx)
+    {
         if (!ctx.performed)
             return;
 
-        if (!controller.enabled)
-            return;
+        ToggleWolfForm();
+    }
 
-        if (controller.isGrounded)
-            velocityY = jumpForce;
+    private void ToggleWolfForm()
+    {
+        isWolf = !isWolf;
+
+        humanModel.SetActive(!isWolf);
+        wolfModel.SetActive(isWolf);
+
+        anim = GetComponentInChildren<Animator>();
+
+        anim.SetBool("IsJumping", isJumping);
+        anim.SetBool("IsGrounded", controller.isGrounded);
+
+        // --- PLAY FX ---
+
+        if (audioSource != null && transformSfx != null)
+            audioSource.PlayOneShot(transformSfx);
+
+        if (transformVfx != null)
+        {
+            Vector3 spawnPos = vfxAnchor != null ? vfxAnchor.position : transform.position;
+            transformVfx.transform.position = spawnPos + vfxOffset;
+            transformVfx.transform.rotation = transform.rotation;
+            transformVfx.Play();
+        }
     }
 
     private void HandleMovement()
@@ -69,17 +131,29 @@ public class PlayerMovement : MonoBehaviour
 
         Vector3 direction = forward * moveInput.y + right * moveInput.x;
 
-        float targetSpeed = (moveInput.magnitude < 0.5f) ? walkSpeed : runSpeed;
-        currentSpeed = Mathf.Lerp(currentSpeed, targetSpeed, acceleration * Time.deltaTime);
+        float run   = runSpeed;
+        float accel = acceleration;
 
-        // apply gravity
+        if (isWolf)
+        {
+            run   = wolfRunSpeed;
+            accel = wolfAcceleration;
+        }
+
+        float targetSpeed = (moveInput.magnitude < 0.5f) ? walkSpeed : run;
+        currentSpeed = Mathf.Lerp(currentSpeed, targetSpeed, accel * Time.deltaTime);
+
         velocityY += gravity * Time.deltaTime;
         direction.y = velocityY;
 
         controller.Move(direction * currentSpeed * Time.deltaTime);
 
+        // landing reset
         if (controller.isGrounded && velocityY < 0f)
+        {
             velocityY = -2f;
+            isJumping = false;
+        }
 
         // rotate toward movement direction
         Vector3 flat = new Vector3(direction.x, 0f, direction.z);
@@ -92,12 +166,51 @@ public class PlayerMovement : MonoBehaviour
                 Time.deltaTime * 10f
             );
         }
+
+        HandleFootsteps();
+    }
+
+    // --- FOOTSTEPS ---
+    private void HandleFootsteps()
+    {
+        bool isMoving = moveInput.magnitude > 0.1f;
+        bool grounded = controller.isGrounded;
+
+        if (!isMoving || !grounded)
+        {
+            stepTimer = 0f;
+            return;
+        }
+
+        stepTimer -= Time.deltaTime;
+
+        if (stepTimer <= 0f)
+        {
+            PlayFootstep();
+
+            // wolf takes slightly faster steps (optional flavor)
+            float speedFactor = isWolf ? 0.75f : 1f;
+            stepTimer = stepInterval * speedFactor;
+        }
+    }
+
+    private void PlayFootstep()
+    {
+        if (footstepSource == null)
+            return;
+
+        AudioClip[] clips = isWolf ? wolfFootsteps : humanFootsteps;
+        if (clips == null || clips.Length == 0)
+            return;
+
+        var clip = clips[Random.Range(0, clips.Length)];
+        footstepSource.PlayOneShot(clip);
     }
 
     private void UpdateAnimator()
     {
-        float speedPercent = moveInput.magnitude;
-        anim.SetFloat("Speed", speedPercent);
+        anim.SetFloat("Speed", moveInput.magnitude);
         anim.SetBool("IsGrounded", controller.isGrounded);
+        anim.SetBool("IsJumping", isJumping);
     }
 }
