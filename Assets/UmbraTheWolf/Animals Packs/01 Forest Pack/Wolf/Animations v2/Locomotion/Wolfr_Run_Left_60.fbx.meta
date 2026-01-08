@@ -1,7 +1,15 @@
 fileFormatVersion: 2
 guid: 9444a71ccca9e394489efa9fa868aa0d
+AssetOrigin:
+  serializedVersion: 1
+  productId: 78795
+  packageName: 'Poly Art: Wolf'
+  packageVersion: 4.0a
+  assetPath: Assets/Malbers Animations/Animals Packs/01 Forest Pack/Wolf/Animations
+    v2/Locomotion/Wolfr_Run_Left_60.fbx
+  uploadId: 807600
 ModelImporter:
-  serializedVersion: 22200
+  serializedVersion: 24200
   internalIDToNameTable:
   - first:
       74: 1827226128182048838
@@ -19,8 +27,6 @@ ModelImporter:
     optimizeGameObjects: 0
     removeConstantScaleCurves: 0
     motionNodeName: 
-    rigImportErrors: 
-    rigImportWarnings: 
     animationImportErrors: 
     animationImportWarnings: 
     animationRetargetingWarnings: 
@@ -51,7 +57,7 @@ ModelImporter:
       loopBlend: 1
       loopBlendOrientation: 0
       loopBlendPositionY: 1
-      loopBlendPositionXZ: 0
+      loopBlendPositionXZ: 1
       keepOriginalOrientation: 1
       keepOriginalPositionY: 1
       keepOriginalPositionXZ: 0
@@ -115,6 +121,9 @@ ModelImporter:
     maxBonesPerVertex: 4
     minBoneWeight: 0.001
     optimizeBones: 1
+    generateMeshLods: 0
+    meshLodGenerationFlags: 0
+    maximumMeshLod: -1
     meshOptimizationFlags: -1
     indexFormat: 0
     secondaryUVAngleDistortion: 8
@@ -152,8 +161,7 @@ ModelImporter:
     hasTranslationDoF: 0
     hasExtraRoot: 0
     skeletonHasParents: 1
-  lastHumanDescriptionAvatarSource: {fileID: 9000000, guid: 25be4f04cada3554ea839c4ad099f89c,
-    type: 3}
+  lastHumanDescriptionAvatarSource: {fileID: 9000000, guid: 25be4f04cada3554ea839c4ad099f89c, type: 3}
   autoGenerateAvatarMappingIfUnspecified: 1
   animationType: 2
   humanoidOversampling: 1
@@ -165,11 +173,3 @@ ModelImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
-AssetOrigin:
-  serializedVersion: 1
-  productId: 78795
-  packageName: 'Poly Art: Wolf'
-  packageVersion: 4.0a
-  assetPath: Assets/Malbers Animations/Animals Packs/01 Forest Pack/Wolf/Animations
-    v2/Locomotion/Wolfr_Run_Left_60.fbx
-  uploadId: 807600
