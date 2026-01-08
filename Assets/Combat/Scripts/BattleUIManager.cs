@@ -7,28 +7,26 @@ public class BattleUIManager : MonoBehaviour
     [Header("Player Status Text")]
     public TextMeshProUGUI currentHPText;
     public TextMeshProUGUI maxHPText;
-    public TextMeshProUGUI currentSPText;
+    public TextMeshProUGUI currentAPText;
 
     [Header("Command Panel")]
     public GameObject commandPanel;
 
-    // CanvasGroup on SkillsLabel
-    public CanvasGroup skillsLabelGroup;
+    // CanvasGroup on WeaponSkillsLabel
+    public CanvasGroup weaponSkillsLabelGroup;
 
     // (optional future)
     public CanvasGroup itemsLabelGroup;
 
     [Header("Command Labels")]
     public GameObject attackLabel;
-    public GameObject skillsLabel;
+    public GameObject weaponSkillsLabel;
     public GameObject itemsLabel;
-    public GameObject runLabel;
+    public GameObject lupusIraLabel;   // replaces old runLabel
 
     // =========================
-    // STATUS UI (BACK-COMPAT)
+    // STATUS UI
     // =========================
-
-    // Existing API used by CombatManager / BattleUnit
     public void UpdateHealth(int current, int max)
     {
         UpdateHP(current, max);
@@ -43,12 +41,10 @@ public class BattleUIManager : MonoBehaviour
             maxHPText.text = max.ToString();
     }
 
-    public void UpdateSP(int current, int max)
+    public void UpdateAP(int current, int max)
     {
-        // we only show current SP in UI, but
-        // we keep the signature for compatibility
-        if (currentSPText != null)
-            currentSPText.text = current.ToString();
+        if (currentAPText != null)
+            currentAPText.text = current.ToString();
     }
 
     // =========================
@@ -73,6 +69,5 @@ public class BattleUIManager : MonoBehaviour
         group.blocksRaycasts = isEnabled;
     }
 
-    // No highlight logic — input-driven
-    public void HighlightCommand(string _ignored) {}
+    public void HighlightCommand(string _ignored) { }
 }

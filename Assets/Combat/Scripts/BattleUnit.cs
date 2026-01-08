@@ -1,6 +1,6 @@
 using UnityEngine;
 using System.Collections;
-using DamageNumbersPro;   // <-- Damage Numbers Pro namespace
+using DamageNumbersPro;
 
 public class BattleUnit : MonoBehaviour
 {
@@ -12,7 +12,7 @@ public class BattleUnit : MonoBehaviour
 
     [Header("Runtime Stats")]
     public int currentHealth;
-    public int currentSkillPoints;
+    public int currentAP;
 
     [Header("Battle Flags")]
     public bool isEnemy;
@@ -25,13 +25,10 @@ public class BattleUnit : MonoBehaviour
     public Animator animator;
     public Transform cameraFocusPoint;
 
-    // =========================
-    // DAMAGE / HEAL NUMBERS
-    // =========================
     [Header("Damage / Heal Numbers")]
-    public DamageNumber damageNumberPrefab;   // Assign mesh damage number prefab here
-    public DamageNumber healNumberPrefab;     // Optional heal prefab
-    public Transform damageNumberAnchor;      // Optional anchor (head/chest); falls back if null
+    public DamageNumber damageNumberPrefab;
+    public DamageNumber healNumberPrefab;
+    public Transform damageNumberAnchor;
 
     private Transform visualRoot;
     private Vector3 startPosition;
@@ -45,8 +42,8 @@ public class BattleUnit : MonoBehaviour
 
     private const string ATTACK_STATE_NAME = "Attack02";
 
-    private const int MIN_SP = 1;
-    private const int MAX_SP = 6;
+    private const int DEFAULT_MAX_AP = 6;
+    private const int DEFAULT_START_AP = 1;
 
     private void Awake()
     {
@@ -61,29 +58,34 @@ public class BattleUnit : MonoBehaviour
 
         if (!enemy)
         {
-            // PLAYER
             characterData = charData;
             currentHealth = characterData.currentHealth;
 
-            characterData.maxSkillPoints = MAX_SP;
+            if (characterData.maxAP <= 0)
+                characterData.maxAP = DEFAULT_MAX_AP;
 
-            // 👉 ALWAYS START COMBAT WITH EXACTLY 1 SP
-            currentSkillPoints = MIN_SP;
-            characterData.currentSkillPoints = MIN_SP;
+            if (characterData.currentAP < 0 || characterData.currentAP > characterData.maxAP)
+                characterData.currentAP = DEFAULT_START_AP;
+
+            // FIX: hard sync runtime AP to CharacterData at init, so UI + runtime are always aligned
+            currentAP = characterData.currentAP;
+            characterData.currentAP = currentAP;
         }
         else
         {
-            // ENEMY
             this.enemyData = enemyData;
             currentHealth = enemyData.maxHealth;
-            currentSkillPoints = 0;
+            currentAP = 0;
         }
 
         BindAnimator();
         CacheStartTransform();
 
         if (!isEnemy && uiManager != null)
-            uiManager.UpdateSP(currentSkillPoints, MAX_SP);
+        {
+            uiManager.UpdateHealth(currentHealth, characterData.maxHealth);
+            uiManager.UpdateAP(currentAP, characterData.maxAP);
+        }
     }
 
     private void BindAnimator()
@@ -107,44 +109,37 @@ public class BattleUnit : MonoBehaviour
         startRotation = visualRoot.rotation;
     }
 
-    // =========================
-    // SP SYSTEM
-    // =========================
-    public bool CanAffordSP(int cost) =>
-        (currentSkillPoints - cost) >= MIN_SP;
+    // ========================= AP =========================
+    public bool CanAffordAP(int cost) => currentAP >= cost;
 
-    public void SpendSP(int cost)
+    public void SpendAP(int cost)
     {
         if (!isEnemy && characterData == null) return;
 
-        currentSkillPoints = Mathf.Max(MIN_SP, currentSkillPoints - cost);
+        currentAP = Mathf.Max(0, currentAP - cost);
 
         if (!isEnemy)
-            characterData.currentSkillPoints = currentSkillPoints;
+            characterData.currentAP = currentAP;
 
         uiManager ??= FindFirstObjectByType<BattleUIManager>();
         if (uiManager != null && !isEnemy)
-            uiManager.UpdateSP(currentSkillPoints, MAX_SP);
+            uiManager.UpdateAP(currentAP, characterData.maxAP);
     }
 
-    public void GainSP(int amount)
+    public void GainAP(int amount)
     {
         if (!isEnemy && characterData == null) return;
+        if (isEnemy) return;
 
-        currentSkillPoints =
-            Mathf.Clamp(currentSkillPoints + amount, MIN_SP, MAX_SP);
-
-        if (!isEnemy)
-            characterData.currentSkillPoints = currentSkillPoints;
+        currentAP = Mathf.Clamp(currentAP + amount, 0, characterData.maxAP);
+        characterData.currentAP = currentAP;
 
         uiManager ??= FindFirstObjectByType<BattleUIManager>();
-        if (uiManager != null && !isEnemy)
-            uiManager.UpdateSP(currentSkillPoints, MAX_SP);
+        if (uiManager != null)
+            uiManager.UpdateAP(currentAP, characterData.maxAP);
     }
 
-    // =========================
-    // ATTACK (RESTORED TIMING)
-    // =========================
+    // ========================= ATTACK =========================
     public IEnumerator PerformAttack(BattleUnit target)
     {
         if (target == null || target.IsDead || animator == null || visualRoot == null)
@@ -153,34 +148,25 @@ public class BattleUnit : MonoBehaviour
         Vector3 dir = (target.transform.position - visualRoot.position).normalized;
         Vector3 attackPos = target.transform.position - dir * 1.5f;
 
-        // Move in
         yield return MoveTo(attackPos, 0.15f);
         FaceTarget(target.transform.position);
 
         animator.ResetTrigger(ATTACK_TRIGGER);
         animator.SetTrigger(ATTACK_TRIGGER);
 
-        // Wait until animation actually starts
         yield return WaitUntilStateEntered(ATTACK_STATE_NAME, 1.0f);
 
-        // Hit timing window
         yield return new WaitForSeconds(0.35f);
         target.ReceiveAttack(this);
 
-        // Wait until animation finishes
         yield return WaitUntilStateFinished(ATTACK_STATE_NAME, 3.0f);
 
-        // Gain SP on attack
-        GainSP(1);
+        GainAP(1);
 
-        // Return to spawn
         yield return MoveTo(startPosition, 0.2f);
         visualRoot.rotation = startRotation;
     }
 
-    // =========================
-    // SKILL (same behavior pattern)
-    // =========================
     public IEnumerator PerformSkill(BattleUnit target)
     {
         if (target == null || target.IsDead || animator == null || visualRoot == null)
@@ -202,51 +188,11 @@ public class BattleUnit : MonoBehaviour
         visualRoot.rotation = startRotation;
     }
 
-    // =========================
-    // ANIMATION HELPERS (RESTORED)
-    // =========================
-    private IEnumerator WaitUntilStateEntered(string state, float timeout)
-    {
-        float t = 0f;
-
-        while (t < timeout)
-        {
-            if (animator.GetCurrentAnimatorStateInfo(0).IsName(state))
-                yield break;
-
-            t += Time.deltaTime;
-            yield return null;
-        }
-    }
-
-    private IEnumerator WaitUntilStateFinished(string state, float timeout)
-    {
-        float t = 0f;
-
-        while (t < timeout)
-        {
-            var info = animator.GetCurrentAnimatorStateInfo(0);
-
-            if (info.IsName(state) && info.normalizedTime >= 1f)
-                yield break;
-
-            t += Time.deltaTime;
-            yield return null;
-        }
-    }
-
-    // =========================
-    // DAMAGE NUMBERS HELPERS
-    // =========================
+    // ========================= DAMAGE NUMBERS =========================
     private Transform GetDamageAnchor()
     {
-        // Prefer explicit anchor, then cameraFocusPoint, then this transform
-        if (damageNumberAnchor != null)
-            return damageNumberAnchor;
-
-        if (cameraFocusPoint != null)
-            return cameraFocusPoint;
-
+        if (damageNumberAnchor != null) return damageNumberAnchor;
+        if (cameraFocusPoint != null) return cameraFocusPoint;
         return transform;
     }
 
@@ -256,11 +202,7 @@ public class BattleUnit : MonoBehaviour
             return;
 
         Transform anchor = GetDamageAnchor();
-
-        // Use overload: Spawn(Vector3 position, int number)
         DamageNumber dn = damageNumberPrefab.Spawn(anchor.position, amount);
-
-        // Make it follow the unit
         if (dn != null)
             dn.followedTarget = anchor;
     }
@@ -271,22 +213,27 @@ public class BattleUnit : MonoBehaviour
             return;
 
         Transform anchor = GetDamageAnchor();
-
         DamageNumber dn = healNumberPrefab.Spawn(anchor.position, amount);
-
         if (dn != null)
             dn.followedTarget = anchor;
     }
 
-    // =========================
-    // DAMAGE
-    // =========================
+    // ========================= DAMAGE (defense + variation + crit) =========================
     public int CalculateDamageFrom(BattleUnit attacker)
     {
         int atk = attacker.isEnemy ? attacker.enemyData.attack : attacker.characterData.attack;
         int def = isEnemy ? enemyData.defense : characterData.defense;
 
-        return Mathf.Max(1, atk - def);
+        int baseDamage = Mathf.Max(1, atk - def);
+
+        float variance = Random.Range(0.80f, 1.20f);
+        int varied = Mathf.RoundToInt(baseDamage * variance);
+
+        bool crit = Random.value < 0.10f;
+        if (crit)
+            varied = Mathf.RoundToInt(varied * 1.5f);
+
+        return Mathf.Max(1, varied);
     }
 
     public void ReceiveAttack(BattleUnit attacker)
@@ -294,7 +241,6 @@ public class BattleUnit : MonoBehaviour
         int dmg = CalculateDamageFrom(attacker);
         currentHealth = Mathf.Max(0, currentHealth - dmg);
 
-        // 👉 Spawn floating damage number on hit
         if (dmg > 0)
             ShowDamageNumber(dmg);
 
@@ -319,9 +265,7 @@ public class BattleUnit : MonoBehaviour
             animator?.SetTrigger(DEATH_TRIGGER);
     }
 
-    // =========================
-    // MOVEMENT + FACING
-    // =========================
+    // ========================= MOVEMENT =========================
     private IEnumerator MoveTo(Vector3 dest, float duration)
     {
         Vector3 start = visualRoot.position;
@@ -344,5 +288,32 @@ public class BattleUnit : MonoBehaviour
 
         if (dir.sqrMagnitude > 0.01f)
             visualRoot.rotation = Quaternion.LookRotation(dir);
+    }
+
+    private IEnumerator WaitUntilStateEntered(string state, float timeout)
+    {
+        float t = 0f;
+        while (t < timeout)
+        {
+            if (animator.GetCurrentAnimatorStateInfo(0).IsName(state))
+                yield break;
+
+            t += Time.deltaTime;
+            yield return null;
+        }
+    }
+
+    private IEnumerator WaitUntilStateFinished(string state, float timeout)
+    {
+        float t = 0f;
+        while (t < timeout)
+        {
+            var info = animator.GetCurrentAnimatorStateInfo(0);
+            if (info.IsName(state) && info.normalizedTime >= 1f)
+                yield break;
+
+            t += Time.deltaTime;
+            yield return null;
+        }
     }
 }

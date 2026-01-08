@@ -5257,7 +5257,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: -0.479, y: 0.037, z: 2.14}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -669.7, y: -488.5}
+  m_AnchoredPosition: {x: -669.7, y: -486.4}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &139075287
@@ -18618,7 +18618,7 @@ GameObject:
   - component: {fileID: 556298780}
   - component: {fileID: 556298779}
   m_Layer: 5
-  m_Name: SkillsLabel
+  m_Name: WeaponSkillsLabel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -25577,53 +25577,6 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 1403270018}
   m_SourcePrefab: {fileID: 100100000, guid: fbb92c08ec09eb143a757829b8acc787, type: 3}
---- !u!1 &794402066
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 794402068}
-  - component: {fileID: 794402067}
-  m_Layer: 0
-  m_Name: GameManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &794402067
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 794402066}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 699f1e67453b1864eae9bd25bc6078fa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::GameManager
-  partyData: {fileID: 11400000, guid: 5a766fbf520d5654a95c0592f9fa3edf, type: 2}
-  playerMaxHealth: 0
-  playerCurrentHealth: 0
---- !u!4 &794402068
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 794402066}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -15.81135, y: -1.65, z: -14.85536}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &795563122 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4889359266679992127, guid: 011a7a7cf12ca634686473e8091b46c7, type: 3}
@@ -29661,7 +29614,7 @@ GameObject:
   - component: {fileID: 918365361}
   - component: {fileID: 918365360}
   m_Layer: 5
-  m_Name: RunText
+  m_Name: AbilityText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -29706,7 +29659,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Escape
+  m_text: 'Lupus Ira
 
 '
   m_isRightToLeft: 0
@@ -29773,7 +29726,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: -36.727077, w: 0}
+  m_margin: {x: 0, y: 0, z: -73.29635, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -36366,7 +36319,7 @@ GameObject:
   - component: {fileID: 1142808832}
   - component: {fileID: 1142808831}
   m_Layer: 5
-  m_Name: RunLabel
+  m_Name: AbilitiesLabel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -40366,11 +40319,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CombatManager
   playerUnits: []
   enemyUnits: []
-  availableSkills:
-  - {fileID: 11400000, guid: 446137c7ecf82404992810a22a823984, type: 2}
-  - {fileID: 11400000, guid: 446137c7ecf82404992810a22a823984, type: 2}
-  availableItems:
-  - {fileID: 11400000, guid: dc926fd74c8987340980a0ba3af5a5e3, type: 2}
+  availableSkills: []
+  availableItems: []
   inputActions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   uiManager: {fileID: 1980007880}
   cameraController: {fileID: 354983106}
@@ -40382,9 +40332,9 @@ MonoBehaviour:
   - {fileID: 1086458826}
   playerBattleUnitPrefab: {fileID: 7308250086843186677, guid: eaf1c960d0bb4084bb03da217c9be594, type: 3}
   possibleEnemies:
-  - {fileID: 11400000, guid: e39ba5d1a7c3eca4a9b03ba7dc9eb111, type: 2}
-  - {fileID: 11400000, guid: fc352e83cee1ebb4da99f7c104dbe972, type: 2}
   - {fileID: 11400000, guid: 6a7e1578d60856e45b1e97df4aeace2d, type: 2}
+  - {fileID: 11400000, guid: fc352e83cee1ebb4da99f7c104dbe972, type: 2}
+  - {fileID: 11400000, guid: e39ba5d1a7c3eca4a9b03ba7dc9eb111, type: 2}
   victoryUI: {fileID: 2069755026}
   musicSource: {fileID: 656576111}
   victoryMusic: {fileID: 8300000, guid: 7ac237e09acde3c48a2d1b61b8b416ee, type: 3}
@@ -41691,7 +41641,7 @@ GameObject:
   - component: {fileID: 1307437502}
   - component: {fileID: 1307437501}
   m_Layer: 5
-  m_Name: RunDescription
+  m_Name: AbilityDescription
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -41705,7 +41655,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1307437499}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -5}
+  m_LocalPosition: {x: 0, y: 0, z: -3.9}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -41713,7 +41663,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -58, y: -69}
+  m_AnchoredPosition: {x: -47.2, y: -65.6}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1307437501
@@ -41736,9 +41686,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Attempt to escape the battle.
-
-'
+  m_text: Increased strength from the spirit wolf. Consumes 2 AP.
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 1aff43bbfc0fe17459a73efa718e6eef, type: 2}
   m_sharedMaterial: {fileID: -533287641388510617, guid: 1aff43bbfc0fe17459a73efa718e6eef, type: 2}
@@ -41803,7 +41751,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 11.417942, y: 0, z: -144.16547, w: 0}
+  m_margin: {x: 11.417942, y: 0, z: -138.39787, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -64371,7 +64319,7 @@ GameObject:
   - component: {fileID: 1969072353}
   - component: {fileID: 1969072352}
   m_Layer: 0
-  m_Name: CurrentSPText
+  m_Name: CurrentAPText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -64393,7 +64341,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -800.6, y: -500.4}
+  m_AnchoredPosition: {x: -802.8, y: -501.1}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1969072352
@@ -65114,14 +65062,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BattleUIManager
   currentHPText: {fileID: 2142476488}
   maxHPText: {fileID: 139075287}
-  currentSPText: {fileID: 1969072352}
+  currentAPText: {fileID: 1969072352}
   commandPanel: {fileID: 2103862217}
-  skillsLabelGroup: {fileID: 0}
+  weaponSkillsLabelGroup: {fileID: 0}
   itemsLabelGroup: {fileID: 0}
   attackLabel: {fileID: 1680648683}
-  skillsLabel: {fileID: 556298777}
+  weaponSkillsLabel: {fileID: 556298777}
   itemsLabel: {fileID: 1012976795}
-  runLabel: {fileID: 1142808829}
+  lupusIraLabel: {fileID: 1142808829}
 --- !u!4 &1984378623 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2932874988217255547, guid: fbb92c08ec09eb143a757829b8acc787, type: 3}
@@ -69656,7 +69604,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &2103862218
 RectTransform:
   m_ObjectHideFlags: 0
@@ -71157,7 +71105,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: -0.368, y: 0.03, z: 1.642}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -734.1, y: -492.4}
+  m_AnchoredPosition: {x: -732.8, y: -489.9}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2142476488
@@ -71417,7 +71365,6 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 410087041}
-  - {fileID: 794402068}
   - {fileID: 1268786050}
   - {fileID: 354983107}
   - {fileID: 2050512210}

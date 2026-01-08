@@ -13,20 +13,14 @@ public class CharacterData : ScriptableObject
     public int maxHealth = 100;
     public int currentHealth = 100;
 
-    public int maxSkillPoints = 30;
-    public int currentSkillPoints = 30;
+    // AP (used to be Skill Points)
+    public int maxAP = 6;
+    public int currentAP = 1;
 
     [Header("Combat Stats")]
     public int attack = 10;
     public int defense = 5;
     public int speed = 8;
-
-    /*
-        Speed can be used to:
-        - Determine turn order
-        - Increase evasion chance
-        - Influence escape chance
-    */
 
     [Header("Skills")]
     public List<SkillData> learnedSkills = new List<SkillData>();
@@ -37,6 +31,6 @@ public class CharacterData : ScriptableObject
     public void ResetStatsForBattle()
     {
         currentHealth = maxHealth;
-        currentSkillPoints = maxSkillPoints;
+        currentAP = Mathf.Clamp(currentAP, 0, maxAP);
     }
 }

@@ -30,7 +30,7 @@ public class PlayerMovement : MonoBehaviour
     public AudioSource footstepSource;
     public AudioClip[] humanFootsteps;
     public AudioClip[] wolfFootsteps;
-    public float stepInterval = 0.4f;   // time between steps when walking
+    public float stepInterval = 0.4f;
 
     private float stepTimer;
 
@@ -49,6 +49,16 @@ public class PlayerMovement : MonoBehaviour
 
     private bool isJumping;
 
+    // =========================
+    // FIX: Movement Suspension
+    // =========================
+    private bool suspendMovement;
+
+    public void SuspendMovement(bool value)
+    {
+        suspendMovement = value;
+    }
+
     private void Awake()
     {
         controller  = GetComponent<CharacterController>();
@@ -65,7 +75,8 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
-        if (!controller.enabled)
+        // FIX: prevent CharacterController.Move from overwriting restored position
+        if (!controller.enabled || suspendMovement)
             return;
 
         moveInput = moveAction.ReadValue<Vector2>();
@@ -104,8 +115,6 @@ public class PlayerMovement : MonoBehaviour
 
         anim.SetBool("IsJumping", isJumping);
         anim.SetBool("IsGrounded", controller.isGrounded);
-
-        // --- PLAY FX ---
 
         if (audioSource != null && transformSfx != null)
             audioSource.PlayOneShot(transformSfx);
@@ -148,14 +157,12 @@ public class PlayerMovement : MonoBehaviour
 
         controller.Move(direction * currentSpeed * Time.deltaTime);
 
-        // landing reset
         if (controller.isGrounded && velocityY < 0f)
         {
             velocityY = -2f;
             isJumping = false;
         }
 
-        // rotate toward movement direction
         Vector3 flat = new Vector3(direction.x, 0f, direction.z);
         if (flat.sqrMagnitude > 0.01f)
         {
@@ -170,7 +177,6 @@ public class PlayerMovement : MonoBehaviour
         HandleFootsteps();
     }
 
-    // --- FOOTSTEPS ---
     private void HandleFootsteps()
     {
         bool isMoving = moveInput.magnitude > 0.1f;
@@ -187,8 +193,6 @@ public class PlayerMovement : MonoBehaviour
         if (stepTimer <= 0f)
         {
             PlayFootstep();
-
-            // wolf takes slightly faster steps (optional flavor)
             float speedFactor = isWolf ? 0.75f : 1f;
             stepTimer = stepInterval * speedFactor;
         }

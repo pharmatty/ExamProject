@@ -868,9 +868,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 100000, guid: ccd537d70e5d84c169ab73db05d00b72, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1975867308146107818}
-    - targetCorrespondingSourceObject: {fileID: 100000, guid: ccd537d70e5d84c169ab73db05d00b72, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 8143636861934086398}
     - targetCorrespondingSourceObject: {fileID: 100030, guid: ccd537d70e5d84c169ab73db05d00b72, type: 3}
       insertIndex: -1
       addedObject: {fileID: 4837336034244254484}
@@ -1212,24 +1209,6 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: -0.02, y: 1.07, z: 0}
---- !u!114 &8143636861934086398
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 783589358757607428}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: eb0d932c26640564b8f768bc8db4d8b4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MovementInput
-  moveAxis: {x: 0, y: 0}
-  movementSpeed: 6
-  rotationSpeed: 0.1
-  fallSpeed: 0.2
-  acceleration: 1
-  blockRotationPlayer: 0
 --- !u!1 &783589358757607450 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 100030, guid: ccd537d70e5d84c169ab73db05d00b72, type: 3}
