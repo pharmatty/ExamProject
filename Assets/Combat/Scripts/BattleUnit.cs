@@ -35,6 +35,8 @@ public class BattleUnit : MonoBehaviour
     private Quaternion startRotation;
 
     private BattleUIManager uiManager;
+    
+    //Attack, Death and Hit Trigger (more to be added) /MN
 
     private static readonly int ATTACK_TRIGGER = Animator.StringToHash("Attack");
     private static readonly int HIT_TRIGGER    = Animator.StringToHash("Hit");

@@ -45,7 +45,7 @@ public class BattleUIManager : MonoBehaviour
             currentAPText.text = current.ToString();
     }
 
-    //COMMAND PANEL /MN
+    //COMMAND PANEL (Fix FADE OUT for skills that are insufficient) /MN
     public void ShowCommandPanel(bool show)
     {
         if (commandPanel != null)
