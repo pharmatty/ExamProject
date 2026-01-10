@@ -49,9 +49,7 @@ public class PlayerMovement : MonoBehaviour
 
     private bool isJumping;
 
-    // =========================
-    // FIX: Movement Suspension
-    // =========================
+    
     private bool suspendMovement;
 
     public void SuspendMovement(bool value)
@@ -75,7 +73,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
-        // FIX: prevent CharacterController.Move from overwriting restored position
+        
         if (!controller.enabled || suspendMovement)
             return;
 

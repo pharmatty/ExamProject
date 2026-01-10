@@ -67,7 +67,7 @@ public class BattleUnit : MonoBehaviour
             if (characterData.currentAP < 0 || characterData.currentAP > characterData.maxAP)
                 characterData.currentAP = DEFAULT_START_AP;
 
-            // FIX: hard sync runtime AP to CharacterData at init, so UI + runtime are always aligned
+            
             currentAP = characterData.currentAP;
             characterData.currentAP = currentAP;
         }
@@ -109,7 +109,7 @@ public class BattleUnit : MonoBehaviour
         startRotation = visualRoot.rotation;
     }
 
-    // ========================= AP =========================
+   
     public bool CanAffordAP(int cost) => currentAP >= cost;
 
     public void SpendAP(int cost)
@@ -139,7 +139,7 @@ public class BattleUnit : MonoBehaviour
             uiManager.UpdateAP(currentAP, characterData.maxAP);
     }
 
-    // ========================= ATTACK =========================
+    // Attack sequence setup //MN
     public IEnumerator PerformAttack(BattleUnit target)
     {
         if (target == null || target.IsDead || animator == null || visualRoot == null)
@@ -188,7 +188,7 @@ public class BattleUnit : MonoBehaviour
         visualRoot.rotation = startRotation;
     }
 
-    // ========================= DAMAGE NUMBERS =========================
+    // Damage numbers, call in// MN
     private Transform GetDamageAnchor()
     {
         if (damageNumberAnchor != null) return damageNumberAnchor;
@@ -218,7 +218,7 @@ public class BattleUnit : MonoBehaviour
             dn.followedTarget = anchor;
     }
 
-    // ========================= DAMAGE (defense + variation + crit) =========================
+    // Damage, defence and crit variation //MN
     public int CalculateDamageFrom(BattleUnit attacker)
     {
         int atk = attacker.isEnemy ? attacker.enemyData.attack : attacker.characterData.attack;
@@ -265,7 +265,7 @@ public class BattleUnit : MonoBehaviour
             animator?.SetTrigger(DEATH_TRIGGER);
     }
 
-    // ========================= MOVEMENT =========================
+    // Here's the movement setup /MN
     private IEnumerator MoveTo(Vector3 dest, float duration)
     {
         Vector3 start = visualRoot.position;

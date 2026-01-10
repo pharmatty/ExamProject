@@ -24,5 +24,5 @@ public class EnemyData : ScriptableObject
     public int goldReward = 5;
 
     [Header("Visuals")]
-    public GameObject enemyPrefab; // Model or prefab for the battle scene
+    public GameObject enemyPrefab; // Model or prefab for the battle scene /MN
 }

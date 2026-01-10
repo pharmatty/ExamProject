@@ -7,5 +7,5 @@ public class ItemData : ScriptableObject
     public string description;
 
     public int healAmount = 0;
-    public Sprite icon; // optional
+    public Sprite icon; // optional maybe I'll use it in the future //MN
 }

@@ -19,7 +19,7 @@ public class BattleCameraController : MonoBehaviour
     public CinemachineCamera camTargetSelection;
     public CinemachineCamera camAttack;
     public CinemachineCamera camEnemyAttack;
-    public CinemachineCamera camVictory; // CM_Win
+    public CinemachineCamera camVictory; 
 
     [Header("Target Selection Camera Settings")]
     public float targetCamDistance = 6f;
@@ -64,7 +64,7 @@ public class BattleCameraController : MonoBehaviour
         }
     }
 
-    // ========================= PUBLIC API =========================
+    
     public void SetCamera(CameraState cam)
     {
         camBattleStart.Priority     = 0;

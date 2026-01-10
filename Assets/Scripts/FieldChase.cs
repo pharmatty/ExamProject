@@ -19,7 +19,7 @@ public class EnemyChase : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponentInChildren<Animator>();
 
-        startPosition = transform.position; // remember spawn point
+        startPosition = transform.position; 
 
         if (player == null)
         {
@@ -35,7 +35,7 @@ public class EnemyChase : MonoBehaviour
         float distance = Vector3.Distance(player.position, transform.position);
         bool inRange = distance <= chaseRange && distance > stopDistance;
 
-        // --- Player in range → chase ---
+        
         if (inRange)
         {
             returningHome = false;
@@ -46,10 +46,10 @@ public class EnemyChase : MonoBehaviour
         }
         else
         {
-            // Count time outside chase range
+           
             timeOutOfRange += Time.deltaTime;
 
-            // After 3 seconds → return to start
+            
             if (timeOutOfRange >= 3f && !returningHome)
             {
                 returningHome = true;
@@ -57,7 +57,7 @@ public class EnemyChase : MonoBehaviour
                 agent.SetDestination(startPosition);
             }
 
-            // When back at origin → stop + idle
+           
             if (returningHome && Vector3.Distance(transform.position, startPosition) < 0.2f)
             {
                 agent.isStopped = true;
@@ -65,7 +65,7 @@ public class EnemyChase : MonoBehaviour
             }
         }
 
-        // --- Animation ---
+        
         bool isMoving = agent.velocity.sqrMagnitude > 0.05f;
         animator.SetBool("IsWalking", isMoving);
     }

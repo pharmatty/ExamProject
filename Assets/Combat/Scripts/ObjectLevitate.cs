@@ -10,16 +10,16 @@ public class Levitate : MonoBehaviour
 
     void Start()
     {
-        // Save the starting position
+       
         startPos = transform.localPosition;
     }
 
     void Update()
     {
-        // Calculate a vertical offset
+        
         float offsetY = Mathf.Sin(Time.time * frequency) * amplitude;
 
-        // Apply the offset
+       
         transform.localPosition = new Vector3(
             startPos.x,
             startPos.y + offsetY,

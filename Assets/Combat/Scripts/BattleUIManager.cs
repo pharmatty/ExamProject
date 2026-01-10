@@ -12,21 +12,19 @@ public class BattleUIManager : MonoBehaviour
     [Header("Command Panel")]
     public GameObject commandPanel;
 
-    // CanvasGroup on WeaponSkillsLabel
+    
     public CanvasGroup weaponSkillsLabelGroup;
 
-    // (optional future)
+    // Still figuring out how to layer the UI potential future use /MN 
     public CanvasGroup itemsLabelGroup;
 
     [Header("Command Labels")]
     public GameObject attackLabel;
     public GameObject weaponSkillsLabel;
     public GameObject itemsLabel;
-    public GameObject lupusIraLabel;   // replaces old runLabel
+    public GameObject lupusIraLabel;   
 
-    // =========================
-    // STATUS UI
-    // =========================
+    //Status and UI setup /MN 
     public void UpdateHealth(int current, int max)
     {
         UpdateHP(current, max);
@@ -47,18 +45,14 @@ public class BattleUIManager : MonoBehaviour
             currentAPText.text = current.ToString();
     }
 
-    // =========================
-    // COMMAND PANEL
-    // =========================
+    //COMMAND PANEL /MN
     public void ShowCommandPanel(bool show)
     {
         if (commandPanel != null)
             commandPanel.SetActive(show);
     }
 
-    // =========================
-    // FADE-OUT SUPPORT
-    // =========================
+    
     public void SetCommandInteractable(CanvasGroup group, bool isEnabled)
     {
         if (group == null)

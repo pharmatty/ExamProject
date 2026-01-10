@@ -6,7 +6,7 @@ public class RotateUI : MonoBehaviour
 
     void Update()
     {
-        // Rotate clockwise on Z axis
+        // Rotate clockwise on Z axis /MN
         transform.Rotate(0, 0, -speed * Time.deltaTime, Space.Self);
     }
 }

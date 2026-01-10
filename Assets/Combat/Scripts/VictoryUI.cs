@@ -3,35 +3,51 @@ using TMPro;
 
 public class VictoryUI : MonoBehaviour
 {
-    public GameObject victoryImage;     
+    public GameObject victoryImage;
     public TextMeshProUGUI expText;
 
     [Header("Fade Settings")]
-    public float fadeDuration = 0.25f;   // quick fade
+    public float fadeDuration = 0.25f;
 
     private CanvasGroup canvasGroup;
 
     private void Awake()
     {
-        if (victoryImage != null)
-        {
-            // Ensure CanvasGroup exists
-            canvasGroup = victoryImage.GetComponent<CanvasGroup>();
-            if (canvasGroup == null)
-                canvasGroup = victoryImage.AddComponent<CanvasGroup>();
+        
+        if (victoryImage == null)
+            victoryImage = gameObject;
 
-            victoryImage.SetActive(false);
-            canvasGroup.alpha = 0f;
-        }
+        
+        canvasGroup = victoryImage.GetComponent<CanvasGroup>();
+        if (canvasGroup == null)
+            canvasGroup = victoryImage.AddComponent<CanvasGroup>();
+
+        victoryImage.SetActive(false);
+        canvasGroup.alpha = 0f;
     }
 
     public void Show(int exp)
     {
+      
+        if (!gameObject.activeInHierarchy)
+            gameObject.SetActive(true);
+
+        if (victoryImage == null)
+        {
+            Debug.LogError("[VictoryUI] victoryImage is NULL. Cannot show Victory UI.");
+            return;
+        }
+
         if (expText != null)
             expText.text = $"{exp}";
 
-        if (victoryImage == null || canvasGroup == null)
-            return;
+        
+        if (canvasGroup == null)
+        {
+            canvasGroup = victoryImage.GetComponent<CanvasGroup>();
+            if (canvasGroup == null)
+                canvasGroup = victoryImage.AddComponent<CanvasGroup>();
+        }
 
         victoryImage.SetActive(true);
         StopAllCoroutines();
