@@ -22,6 +22,6 @@ public class EnemyAI : MonoBehaviour
         yield return new WaitForSeconds(Random.Range(0.4f, 0.8f));
 
         
-        yield return unit.PerformAttack(target);
+        yield return unit.PerformAttack(target); //Future possible commands need to adhere to different enemy types /MN
     }
 }

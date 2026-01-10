@@ -6,7 +6,7 @@ public class VictoryUI : MonoBehaviour
     public GameObject victoryImage;
     public TextMeshProUGUI expText;
 
-    [Header("Fade Settings")]
+    [Header("Fade Settings")] //Make note to change this its still not transitioning properly //MN
     public float fadeDuration = 0.25f;
 
     private CanvasGroup canvasGroup;

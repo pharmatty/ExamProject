@@ -200,7 +200,7 @@ public class CombatManager : MonoBehaviour
         uiManager.UpdateHealth(p.currentHealth, p.characterData.maxHealth);
         uiManager.UpdateAP(p.currentAP, p.characterData.maxAP);
     }
-
+    //Remember UI change for PlayerCommand and skills with insufficient AP //MN
     private void EnterPlayerCommand()
     {
         state = CombatState.PlayerCommand;
@@ -266,7 +266,7 @@ public class CombatManager : MonoBehaviour
 
         CycleTarget(+1);
     }
-
+    //NEEDS FIX /MN
     private void EnterTargetSelection()
     {
         state = CombatState.TargetSelection;
@@ -451,7 +451,7 @@ public class CombatManager : MonoBehaviour
             yield return null;
         }
     }
-
+    // PLAYER UNIT  //MN
     private void SpawnPlayerUnits()
     {
         var party = GameManager.Instance.partyData.currentParty;
@@ -467,7 +467,7 @@ public class CombatManager : MonoBehaviour
 
         playerUnits.Add(unit);
     }
-
+    //ENEMY UNIT //MN
     private void SpawnEnemyUnits()
     {
         int count = Random.Range(1, enemySpawnPoints.Length + 1);

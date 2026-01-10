@@ -109,7 +109,7 @@ public class BattleUnit : MonoBehaviour
         startRotation = visualRoot.rotation;
     }
 
-   
+    
     public bool CanAffordAP(int cost) => currentAP >= cost;
 
     public void SpendAP(int cost)
@@ -195,7 +195,7 @@ public class BattleUnit : MonoBehaviour
         if (cameraFocusPoint != null) return cameraFocusPoint;
         return transform;
     }
-
+    //DamageNumberPrefab /MN
     private void ShowDamageNumber(int amount)
     {
         if (damageNumberPrefab == null || amount == 0)
@@ -235,7 +235,7 @@ public class BattleUnit : MonoBehaviour
 
         return Mathf.Max(1, varied);
     }
-
+    //Attack /MN
     public void ReceiveAttack(BattleUnit attacker)
     {
         int dmg = CalculateDamageFrom(attacker);

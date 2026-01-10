@@ -7,7 +7,7 @@ public class EnemyData : ScriptableObject
     [Header("Identity")]
     public string enemyName;
 
-    [Header("Stats")]
+    [Header("Stats")] //Magic Stats later?? /MN
     public int maxHealth = 50;
     public int attack = 8;
     public int defense = 3;
